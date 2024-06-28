@@ -1,0 +1,29 @@
+{
+    "name": "John Doe",
+    "title": "Software Developer",
+    "email": "john.doe@example.com",
+    "phone": "(123) 456-7890",
+    "summary": "Experienced software developer with a passion for creating efficient and scalable applications.",
+    "experience": [
+      {
+        "company": "Tech Co.",
+        "position": "Senior Developer",
+        "duration": "2018 - Present",
+        "description": "Lead development team in creating innovative web applications."
+      },
+      {
+        "company": "StartUp Inc.",
+        "position": "Junior Developer",
+        "duration": "2015 - 2018",
+        "description": "Contributed to the development of mobile apps and backend services."
+      }
+    ],
+    "education": [
+      {
+        "institution": "University of Technology",
+        "degree": "BSc in Computer Science",
+        "year": "2015"
+      }
+    ],
+    "skills": ["JavaScript", "React", "Node.js", "Python", "SQL", "Git","typescript"]
+  }

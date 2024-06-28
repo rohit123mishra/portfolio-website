@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
-import { Box, Flex ,Button} from "@chakra-ui/react";
+import { Box, Flex, Button } from "@chakra-ui/react";
 import AdminSidebar from "../components/AdminSidebar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Replace with actual auth logic
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   if (!isAuthenticated) {
     return <AdminLogin setIsAuthenticated={setIsAuthenticated} />;
@@ -12,8 +13,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <Flex>
-      <AdminSidebar />
-      <Box flex={1} p={8}>
+      <AdminSidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      <Box 
+        ml={{ base: 0, md: isSidebarOpen ? "280px" : "80px" }} 
+        transition="margin-left 0.3s ease"
+        w="full"
+        p="4"
+      >
         {children}
       </Box>
     </Flex>

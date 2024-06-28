@@ -1,5 +1,6 @@
 "use client";
-import { Box, Heading, Text, VStack, HStack, Badge } from "@chakra-ui/react";
+import { useState } from "react";
+import { Box, Heading, Text, VStack, HStack, Badge, Button, Flex } from "@chakra-ui/react";
 
 interface ResumePreviewProps {
   name: string;
@@ -31,23 +32,40 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
   education,
   skills,
 }) => {
-  return (
-    <Box borderWidth={1} borderRadius="lg" p={6}>
-      <VStack align="stretch" spacing={6}>
-        <Box>
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 3;
+
+  const totalPages = Math.ceil((1 + 1 + experience.length + education.length + 1) / itemsPerPage);
+
+  const handlePrevPage = () => setPage(prev => Math.max(1, prev - 1));
+  const handleNextPage = () => setPage(prev => Math.min(totalPages, prev + 1));
+
+  const renderPageContent = () => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    let content = [];
+
+    if (startIndex === 0) {
+      content.push(
+        <Box key="header">
           <Heading as="h2" size="xl">{name}</Heading>
           <Text fontSize="xl" color="gray.500">{title}</Text>
           <Text>{email} | {phone}</Text>
-        </Box>
-
-        <Box>
+        </Box>,
+        <Box key="summary">
           <Heading as="h3" size="lg" mb={2}>Summary</Heading>
           <Text>{summary}</Text>
         </Box>
+      );
+    }
 
-        <Box>
+    const experienceStart = 2;
+    const experienceEnd = experienceStart + experience.length;
+    if (startIndex < experienceEnd && endIndex > experienceStart) {
+      content.push(
+        <Box key="experience">
           <Heading as="h3" size="lg" mb={2}>Experience</Heading>
-          {experience.map((exp, index) => (
+          {experience.slice(Math.max(0, startIndex - experienceStart), endIndex - experienceStart).map((exp, index) => (
             <Box key={index} mb={4}>
               <Heading as="h4" size="md">{exp.position}</Heading>
               <Text fontWeight="bold">{exp.company}</Text>
@@ -56,18 +74,28 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
             </Box>
           ))}
         </Box>
+      );
+    }
 
-        <Box>
+    const educationStart = experienceEnd;
+    const educationEnd = educationStart + education.length;
+    if (startIndex < educationEnd && endIndex > educationStart) {
+      content.push(
+        <Box key="education">
           <Heading as="h3" size="lg" mb={2}>Education</Heading>
-          {education.map((edu, index) => (
+          {education.slice(Math.max(0, startIndex - educationStart), endIndex - educationStart).map((edu, index) => (
             <Box key={index} mb={2}>
               <Text fontWeight="bold">{edu.institution}</Text>
               <Text>{edu.degree}, {edu.year}</Text>
             </Box>
           ))}
         </Box>
+      );
+    }
 
-        <Box>
+    if (startIndex <= educationEnd && endIndex > educationEnd) {
+      content.push(
+        <Box key="skills">
           <Heading as="h3" size="lg" mb={2}>Skills</Heading>
           <HStack wrap="wrap">
             {skills.map((skill, index) => (
@@ -77,7 +105,28 @@ const ResumePreview: React.FC<ResumePreviewProps> = ({
             ))}
           </HStack>
         </Box>
+      );
+    }
+
+    return content;
+  };
+
+  return (
+    <Box borderWidth={1} borderRadius="lg" p={6}>
+      <VStack align="stretch" spacing={6}>
+        {renderPageContent()}
       </VStack>
+      <Flex justifyContent="center" mt={4}>
+        <Button onClick={handlePrevPage} disabled={page === 1} mr={2}>
+          Previous
+        </Button>
+        <Text mx={4}>
+          Page {page} of {totalPages}
+        </Text>
+        <Button onClick={handleNextPage} disabled={page === totalPages} ml={2}>
+          Next
+        </Button>
+      </Flex>
     </Box>
   );
 };
